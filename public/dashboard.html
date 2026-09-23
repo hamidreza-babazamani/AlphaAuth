@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>داشبورد | AlphaAuth</title>
+    <meta name="description" content="داشبورد کاربری AlphaAuth">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233b82f6'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='48' fill='%230a1128'/%3E%3Ctext x='50' y='72' font-size='72' font-family='Georgia,serif' font-weight='bold' text-anchor='middle' fill='url(%23g)'%3Eα%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+
+    <div class="glass wide" id="dashboardView">
+
+        <!-- ======== Topbar ======== -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#3b82f6" />
+                            <stop offset="1" stop-color="#8b5cf6" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="46" fill="none" stroke="url(#grad)" stroke-width="3" opacity="0.6" />
+                    <text x="50" y="72" font-size="68" font-family="Georgia,serif" font-weight="bold"
+                        text-anchor="middle" fill="url(#grad)">α</text>
+                </svg>
+                <div class="brand-text">Alpha<span>Auth</span></div>
+            </div>
+
+            <div class="topbar-right">
+                <span id="userEmailTop">...</span>
+                <button class="btn btn-ghost btn-small" id="logoutBtnTop">خروج</button>
+            </div>
+        </div>
+
+        <!-- ======== پیام‌ها ======== -->
+        <div class="msg" id="dashMsg"></div>
+
+        <!-- ======== کارت پروفایل ======== -->
+        <div class="text-center mb-6">
+            <div class="avatar">👤</div>
+            <h2 id="userEmail" style="font-size: 20px;">...</h2>
+            <div class="mt-2">
+                <span class="badge no" id="emailBadge">...</span>
+                <span class="badge no" id="phoneBadge">...</span>
+                <span class="badge admin hidden" id="adminBadge">👑 ادمین</span>
+            </div>
+        </div>
+
+        <!-- ======== اطلاعات حساب ======== -->
+        <div
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px; margin-bottom: 20px;">
+            <h3 style="font-size: 15px; margin-bottom: 16px; color: #cbd5e1;">📊 اطلاعات حساب</h3>
+
+            <div style="display: grid; gap: 12px; font-size: 13px;">
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <span style="color: #94a3b8;">ایمیل:</span>
+                    <span id="infoEmail" style="color: #e2e8f0; direction: ltr;">...</span>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <span style="color: #94a3b8;">شماره تلفن:</span>
+                    <span id="infoPhone" style="color: #e2e8f0; direction: ltr;">...</span>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <span style="color: #94a3b8;">نقش:</span>
+                    <span id="infoRole" style="color: #e2e8f0;">...</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">عضویت از:</span>
+                    <span id="infoCreated" style="color: #e2e8f0;">...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======== اکشن‌ها ======== -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+
+            <!-- اگه ادمین بود -->
+            <a href="/admin" id="adminLink" class="hidden" style="text-decoration: none;">
+                <button class="btn" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                    👑 ورود به پنل ادمین
+                </button>
+            </a>
+
+            <!-- تأیید ایمیل (اگه تأیید نشده) -->
+            <button class="btn btn-ghost hidden" id="verifyEmailBtn">
+                ✅ تأیید ایمیل
+            </button>
+
+            <!-- تأیید شماره (اگه تأیید نشده) -->
+            <button class="btn btn-ghost hidden" id="verifyPhoneBtn">
+                📱 تأیید شماره تلفن
+            </button>
+
+            <!-- خروج -->
+            <button class="btn btn-ghost" id="logoutBtn">
+                🚪 خروج از حساب
+            </button>
+        </div>
+
+        <!-- ======== فوتر ======== -->
+        <div class="footer-brand">
+            Powered by <b>AlphaAuth</b>
+        </div>
+
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- Modal تأیید ایمیل / شماره                                          -->
+    <!-- ================================================================ -->
+    <div id="modal" class="hidden"
+        style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div class="glass" style="max-width: 380px;">
+            <h2 id="modalTitle">تأیید</h2>
+            <p class="subtitle" id="modalSubtitle">کد ارسال‌شده را وارد کن</p>
+
+            <div class="msg" id="modalMsg"></div>
+
+            <div id="modalInputStep">
+                <div class="form-group">
+                    <input type="text" id="modalInput" placeholder="..." />
+                </div>
+                <button class="btn" id="modalSubmit">ارسال</button>
+            </div>
+
+            <div id="modalOtpStep" class="hidden">
+                <div class="form-group">
+                    <input type="text" id="modalOtp" class="otp-input" maxlength="6" placeholder="------"
+                        inputmode="numeric" />
+                </div>
+                <button class="btn" id="modalConfirm">تأیید</button>
+                <button class="btn btn-ghost" id="modalResend">ارسال مجدد کد</button>
+            </div>
+
+            <div class="link" id="modalClose">بستن</div>
+        </div>
+    </div>
+
+    <script>
+        // ============ ابزارها ============
+        const $ = (id) => document.getElementById(id);
+
+        async function api(path, options = {}) {
+            const res = await fetch('/api/auth' + path, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                ...options,
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || data.errors?.[0]?.message || 'خطا');
+            return data;
+        }
+
+        function showMsg(el, text, type = 'error') {
+            el.textContent = text;
+            el.className = 'msg show ' + type;
+            setTimeout(() => el.classList.remove('show'), 5000);
+        }
+
+        // ============ لود اطلاعات کاربر ============
+        let currentUser = null;
+
+        async function loadUser() {
+            try {
+                const res = await fetch('/api/auth/me', { credentials: 'include' });
+                if (!res.ok) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                const { data } = await res.json();
+                currentUser = data.user;
+                renderUser();
+            } catch {
+                window.location.href = '/';
+            }
+        }
+
+        // ============ نمایش اطلاعات ============
+        function renderUser() {
+            const u = currentUser;
+
+            $('userEmailTop').textContent = u.email;
+            $('userEmail').textContent = u.email;
+
+            // بج ایمیل
+            if (u.isEmailVerified) {
+                $('emailBadge').textContent = '✅ ایمیل تأیید شده';
+                $('emailBadge').className = 'badge ok';
+            } else {
+                $('emailBadge').textContent = '⚠️ ایمیل تأیید نشده';
+                $('emailBadge').className = 'badge no';
+            }
+
+            // بج شماره
+            if (u.phone) {
+                if (u.isPhoneVerified) {
+                    $('phoneBadge').textContent = '✅ شماره تأیید شده';
+                    $('phoneBadge').className = 'badge ok';
+                } else {
+                    $('phoneBadge').textContent = '⚠️ شماره تأیید نشده';
+                    $('phoneBadge').className = 'badge no';
+                }
+            } else {
+                $('phoneBadge').textContent = '⚠️ شماره ثبت نشده';
+                $('phoneBadge').className = 'badge no';
+            }
+
+            // بج ادمین
+            if (u.role === 'admin') {
+                $('adminBadge').classList.remove('hidden');
+                $('adminLink').classList.remove('hidden');
+            }
+
+            // اطلاعات حساب
+            $('infoEmail').textContent = u.email;
+            $('infoPhone').textContent = u.phone || 'ثبت نشده';
+            $('infoRole').textContent = u.role === 'admin' ? '👑 ادمین' : '👤 کاربر عادی';
+            $('infoCreated').textContent = new Date(u.createdAt).toLocaleDateString('fa-IR');
+
+            // دکمه‌های تأیید
+            if (!u.isEmailVerified) {
+                $('verifyEmailBtn').classList.remove('hidden');
+            }
+            if (!u.isPhoneVerified) {
+                $('verifyPhoneBtn').classList.remove('hidden');
+            }
+        }
+
+        // ============ خروج ============
+        async function logout() {
+            try {
+                await api('/logout');
+            } catch { }
+            window.location.href = '/';
+        }
+
+        $('logoutBtn').onclick = logout;
+        $('logoutBtnTop').onclick = logout;
+
+        // ============ Modal ============
+        const modal = $('modal');
+        const modalState = { type: null };
+
+        function openModal(type) {
+            modalState.type = type;
+            modal.classList.remove('hidden');
+
+            if (type === 'email') {
+                $('modalTitle').textContent = '📧 تأیید ایمیل';
+                $('modalSubtitle').textContent = 'کد ۶ رقمی ارسال‌شده به ایمیلت رو وارد کن';
+                $('modalInputStep').classList.add('hidden');
+                $('modalOtpStep').classList.remove('hidden');
+                $('modalOtp').value = '';
+                sendEmailOtp();
+            } else if (type === 'phone') {
+                $('modalTitle').textContent = '📱 تأیید شماره';
+                $('modalSubtitle').textContent = 'شماره موبایل خودت رو وارد کن';
+                $('modalInputStep').classList.remove('hidden');
+                $('modalOtpStep').classList.add('hidden');
+                $('modalInput').value = '';
+                $('modalInput').placeholder = '09123456789';
+                $('modalInput').type = 'tel';
+            }
+
+            $('modalMsg').classList.remove('show');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        $('modalClose').onclick = closeModal;
+
+        async function sendEmailOtp() {
+            try {
+                await api('/verify-email/send');
+                showMsg($('modalMsg'), 'کد ارسال شد ✓', 'success');
+            } catch (err) {
+                showMsg($('modalMsg'), err.message);
+            }
+        }
+
+        $('modalSubmit').onclick = async () => {
+            const type = modalState.type;
+
+            if (type === 'phone') {
+                const phone = $('modalInput').value.trim();
+                if (!phone) {
+                    showMsg($('modalMsg'), 'شماره را وارد کن');
+                    return;
+                }
+
+                try {
+                    await api('/verify-phone/send', {
+                        body: JSON.stringify({ phone }),
+                    });
+                    $('modalInputStep').classList.add('hidden');
+                    $('modalOtpStep').classList.remove('hidden');
+                    $('modalOtp').value = '';
+                    showMsg($('modalMsg'), 'کد ارسال شد ✓', 'success');
+                } catch (err) {
+                    showMsg($('modalMsg'), err.message);
+                }
+            }
+        };
+
+        $('modalConfirm').onclick = async () => {
+            const type = modalState.type;
+            const code = $('modalOtp').value.trim();
+
+            if (!code) {
+                showMsg($('modalMsg'), 'کد را وارد کن');
+                return;
+            }
+
+            const endpoint = type === 'email'
+                ? '/verify-email/confirm'
+                : '/verify-phone/confirm';
+
+            try {
+                await api(endpoint, {
+                    body: JSON.stringify({ code }),
+                });
+                closeModal();
+                showMsg($('dashMsg'), 'با موفقیت تأیید شد ✓', 'success');
+                await loadUser();
+            } catch (err) {
+                showMsg($('modalMsg'), err.message);
+            }
+        };
+
+        $('modalResend').onclick = async () => {
+            const type = modalState.type;
+            if (type === 'email') {
+                await sendEmailOtp();
+            } else if (type === 'phone') {
+                $('modalSubmit').click();
+            }
+        };
+
+        $('verifyEmailBtn').onclick = () => openModal('email');
+        $('verifyPhoneBtn').onclick = () => openModal('phone');
+
+        // ============ شروع ============
+        loadUser();
+    </script>
+</body>
+
+</html>

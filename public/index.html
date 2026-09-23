@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AlphaAuth | احراز هویت مدرن</title>
+    <meta name="description" content="AlphaAuth - سیستم احراز هویت امن با تأیید ایمیل و شماره تلفن">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233b82f6'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='48' fill='%230a1128'/%3E%3Ctext x='50' y='72' font-size='72' font-family='Georgia,serif' font-weight='bold' text-anchor='middle' fill='url(%23g)'%3Eα%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="/favicon.png">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+
+    <div class="glass" id="app">
+
+        <!-- ======== لوگو AlphaAuth ======== -->
+        <div class="brand">
+            <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#3b82f6" />
+                        <stop offset="1" stop-color="#8b5cf6" />
+                    </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="46" fill="none" stroke="url(#grad)" stroke-width="3" opacity="0.6" />
+                <text x="50" y="72" font-size="68" font-family="Georgia,serif" font-weight="bold" text-anchor="middle"
+                    fill="url(#grad)">α</text>
+            </svg>
+            <div class="brand-text">Alpha<span>Auth</span></div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ورود / ثبت‌نام                                                    -->
+        <!-- ================================================================ -->
+        <div id="authView">
+            <div class="tabs">
+                <button class="tab active" data-tab="login">ورود</button>
+                <button class="tab" data-tab="signup">ثبت‌نام</button>
+            </div>
+
+            <div class="msg" id="authMsg"></div>
+
+            <!-- فرم ورود -->
+            <form id="loginForm">
+                <h2>خوش آمدی 👋</h2>
+                <p class="subtitle">وارد حساب کاربری خودت شو</p>
+
+                <div class="form-group">
+                    <label>ایمیل</label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required />
+                </div>
+                <div class="form-group">
+                    <label>پسورد</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required />
+                </div>
+
+                <button type="submit" class="btn">ورود</button>
+                <div class="link" id="toForgot">رمزت رو فراموش کردی؟</div>
+            </form>
+
+            <!-- فرم ثبت‌نام -->
+            <form id="signupForm" class="hidden">
+                <h2>ساخت حساب 🚀</h2>
+                <p class="subtitle">چند ثانیه‌ای عضو AlphaAuth شو</p>
+
+                <div class="form-group">
+                    <label>ایمیل</label>
+                    <input type="email" id="signupEmail" placeholder="you@example.com" required />
+                </div>
+                <div class="form-group">
+                    <label>پسورد</label>
+                    <input type="password" id="signupPassword" placeholder="حداقل ۸ کاراکتر + عدد" required />
+                </div>
+                <div class="form-group">
+                    <label>تکرار پسورد</label>
+                    <input type="password" id="signupConfirm" placeholder="••••••••" required />
+                </div>
+
+                <button type="submit" class="btn">ثبت‌نام</button>
+            </form>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- فراموشی رمز                                                      -->
+        <!-- ================================================================ -->
+        <div id="forgotView" class="hidden">
+            <div class="msg" id="forgotMsg"></div>
+            <h2>بازیابی رمز 🔐</h2>
+            <p class="subtitle" id="forgotSubtitle">ایمیلت رو وارد کن تا کد بازیابی بفرستیم</p>
+
+            <div id="forgotStep1">
+                <div class="form-group">
+                    <input type="email" id="forgotEmail" placeholder="you@example.com" />
+                </div>
+                <button class="btn" id="sendResetBtn">ارسال کد بازیابی</button>
+            </div>
+
+            <div id="forgotStep2" class="hidden">
+                <p class="subtitle">کد دریافتی و پسورد جدید رو وارد کن</p>
+                <div class="form-group">
+                    <input type="text" id="resetOtp" class="otp-input" maxlength="6" placeholder="------"
+                        inputmode="numeric" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="newPassword" placeholder="پسورد جدید" />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="newPasswordConfirm" placeholder="تکرار پسورد جدید" />
+                </div>
+                <button class="btn" id="resetBtn">تغییر پسورد</button>
+            </div>
+
+            <div class="link" id="backFromForgot">بازگشت به ورود</div>
+        </div>
+
+        <!-- ======== فوتر برند ======== -->
+        <div class="footer-brand">
+            Powered by <b>AlphaAuth</b>
+        </div>
+
+    </div>
+
+    <script>
+        // ============ ابزارهای کوتاه ============
+        const $ = (id) => document.getElementById(id);
+
+        async function api(path, options = {}) {
+            const res = await fetch('/api/auth' + path, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                ...options,
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || data.errors?.[0]?.message || 'خطا');
+            return data;
+        }
+
+        function showMsg(el, text, type = 'error') {
+            el.textContent = text;
+            el.className = 'msg show ' + type;
+            setTimeout(() => el.classList.remove('show'), 5000);
+        }
+
+        function showView(viewId) {
+            ['authView', 'forgotView'].forEach((id) => $(id).classList.add('hidden'));
+            $(viewId).classList.remove('hidden');
+        }
+
+        // ============ تب‌ها ============
+        document.querySelectorAll('.tab').forEach((tab) => {
+            tab.onclick = () => {
+                document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.tab;
+                $('loginForm').classList.toggle('hidden', target !== 'login');
+                $('signupForm').classList.toggle('hidden', target !== 'signup');
+            };
+        });
+
+        // ============ ثبت‌نام ============
+        $('signupForm').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await api('/signup', {
+                    body: JSON.stringify({
+                        email: $('signupEmail').value,
+                        password: $('signupPassword').value,
+                        confirmPassword: $('signupConfirm').value,
+                    }),
+                });
+                window.location.href = '/dashboard';
+            } catch (err) {
+                showMsg($('authMsg'), err.message);
+            }
+        };
+
+        // ============ ورود ============
+        $('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await api('/login', {
+                    body: JSON.stringify({
+                        email: $('loginEmail').value,
+                        password: $('loginPassword').value,
+                    }),
+                });
+                window.location.href = '/dashboard';
+            } catch (err) {
+                showMsg($('authMsg'), err.message);
+            }
+        };
+
+        // ============ فراموشی رمز ============
+        $('toForgot').onclick = () => {
+            $('forgotStep1').classList.remove('hidden');
+            $('forgotStep2').classList.add('hidden');
+            $('forgotSubtitle').textContent = 'ایمیلت رو وارد کن تا کد بازیابی بفرستیم';
+            showView('forgotView');
+        };
+
+        $('sendResetBtn').onclick = async () => {
+            try {
+                await api('/forgot-password', {
+                    body: JSON.stringify({ email: $('forgotEmail').value }),
+                });
+                $('forgotStep1').classList.add('hidden');
+                $('forgotStep2').classList.remove('hidden');
+                $('forgotSubtitle').textContent = 'کد دریافتی و پسورد جدید رو وارد کن';
+                showMsg($('forgotMsg'), 'اگر ایمیل معتبر باشد، کد ارسال شد ✓', 'success');
+            } catch (err) {
+                showMsg($('forgotMsg'), err.message);
+            }
+        };
+
+        $('resetBtn').onclick = async () => {
+            try {
+                await api('/reset-password', {
+                    body: JSON.stringify({
+                        email: $('forgotEmail').value,
+                        code: $('resetOtp').value,
+                        newPassword: $('newPassword').value,
+                        confirmPassword: $('newPasswordConfirm').value,
+                    }),
+                });
+                showMsg($('forgotMsg'), 'پسورد تغییر کرد! در حال انتقال به ورود...', 'success');
+                setTimeout(() => {
+                    showView('authView');
+                    document.querySelector('[data-tab="login"]').click();
+                }, 1200);
+            } catch (err) {
+                showMsg($('forgotMsg'), err.message);
+            }
+        };
+
+        $('backFromForgot').onclick = () => showView('authView');
+
+        // ================================================================
+        // ✅ بررسی: اگه کاربر از قبل لاگین هست، بره به داشبورد
+        // ================================================================
+        (async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/me', { credentials: 'include' });
+                if (res.ok) {
+                    window.location.href = '/dashboard';
+                }
+            } catch {
+                // خطا → بمون تو صفحه ورود
+            }
+        })();
+    </script>
+</body>
+
+</html>

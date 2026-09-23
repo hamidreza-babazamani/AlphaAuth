@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>پنل ادمین | AlphaAuth</title>
+    <meta name="description" content="پنل مدیریت AlphaAuth">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233b82f6'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='48' fill='%230a1128'/%3E%3Ctext x='50' y='72' font-size='72' font-family='Georgia,serif' font-weight='bold' text-anchor='middle' fill='url(%23g)'%3Eα%3C/text%3E%3C/svg%3E">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+
+    <style>
+        /* استایل‌های مخصوص این صفحه */
+        .admin-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .admin-title .crown {
+            font-size: 22px;
+            filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.6));
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-right: auto;
+        }
+
+        .admin-actions a {
+            text-decoration: none;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .icon-btn {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .icon-btn:hover:not(:disabled) {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .icon-btn.danger:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+        }
+
+        .icon-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .role-badge.admin {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fcd34d;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .role-badge.user {
+            background: rgba(148, 163, 184, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 4px;
+        }
+
+        .status-dot.ok {
+            background: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+
+        .status-dot.no {
+            background: #fbbf24;
+            box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .empty-state .emoji {
+            font-size: 42px;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glass wide" id="adminView">
+
+        <!-- ======== Admin Header ======== -->
+        <div class="admin-header">
+            <div class="admin-title">
+                <span class="crown">👑</span>
+                <span>AlphaAuth Admin</span>
+            </div>
+
+            <div class="admin-actions">
+                <a href="/dashboard">
+                    <button class="btn btn-ghost btn-small">داشبورد</button>
+                </a>
+                <button class="btn btn-ghost btn-small" id="logoutBtn">خروج</button>
+            </div>
+        </div>
+
+        <!-- ======== پیام‌ها ======== -->
+        <div class="msg" id="adminMsg"></div>
+
+        <!-- ======== آمار کلی ======== -->
+        <h3 class="section-title">📊 آمار کلی</h3>
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotalUsers">-</div>
+                <div class="stat-label">کل کاربران</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statVerifiedEmails">-</div>
+                <div class="stat-label">ایمیل تأیید شده</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statVerifiedPhones">-</div>
+                <div class="stat-label">شماره تأیید شده</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statAdmins">-</div>
+                <div class="stat-label">ادمین‌ها</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statRecent">-</div>
+                <div class="stat-label">۷ روز اخیر</div>
+            </div>
+        </div>
+
+        <!-- ======== مدیریت کاربران ======== -->
+        <h3 class="section-title">👥 مدیریت کاربران</h3>
+
+        <!-- سرچ و فیلتر -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 سرچ ایمیل..." />
+            <select id="roleFilter">
+                <option value="">همه نقش‌ها</option>
+                <option value="admin">👑 ادمین</option>
+                <option value="user">👤 کاربر عادی</option>
+            </select>
+            <button class="btn" id="searchBtn">اعمال</button>
+            <button class="btn btn-ghost" id="clearBtn">پاک کردن</button>
+        </div>
+
+        <!-- جدول -->
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ایمیل</th>
+                        <th>نقش</th>
+                        <th>ایمیل تأیید</th>
+                        <th>شماره</th>
+                        <th>شماره تأیید</th>
+                        <th>تاریخ عضویت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <span class="emoji">⏳</span>
+                            در حال بارگذاری...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- صفحه‌بندی -->
+        <div class="pagination hidden" id="pagination">
+            <button id="prevBtn">→ قبلی</button>
+            <span class="page-info" id="pageInfo">صفحه ۱ از ۱</span>
+            <button id="nextBtn">بعدی ←</button>
+        </div>
+
+        <!-- ======== فوتر ======== -->
+        <div class="footer-brand">
+            Powered by <b>AlphaAuth</b>
+        </div>
+
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- Modal تأیید حذف                                                   -->
+    <!-- ================================================================ -->
+    <div id="confirmModal" class="hidden"
+        style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div class="glass" style="max-width: 380px;">
+            <h2 id="confirmTitle">تأیید حذف</h2>
+            <p class="subtitle" id="confirmText">آیا از حذف این کاربر مطمئن هستی؟</p>
+
+            <div class="msg" id="confirmMsg"></div>
+
+            <button class="btn btn-danger" id="confirmYes">بله، حذف کن</button>
+            <button class="btn btn-ghost" id="confirmNo">انصراف</button>
+        </div>
+    </div>
+
+    <script>
+        // ============ ابزارها ============
+        const $ = (id) => document.getElementById(id);
+
+        async function apiGet(path) {
+            const res = await fetch('/api/admin' + path, { credentials: 'include' });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || 'خطا');
+            return data;
+        }
+
+        async function apiSend(path, method, body) {
+            const res = await fetch('/api/admin' + path, {
+                method,
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: body ? JSON.stringify(body) : undefined,
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || 'خطا');
+            return data;
+        }
+
+        function showMsg(text, type = 'error') {
+            const el = $('adminMsg');
+            el.textContent = text;
+            el.className = 'msg show ' + type;
+            setTimeout(() => el.classList.remove('show'), 4000);
+        }
+
+        // ============ وضعیت ============
+        const state = {
+            page: 1,
+            limit: 10,
+            search: '',
+            role: '',
+            currentUser: null,
+            deleteTarget: null,
+        };
+
+        // ============ محافظت و بارگذاری اولیه ============
+        async function init() {
+            try {
+                // چک کن کاربر لاگین هست و ادمینه
+                const res = await fetch('/api/auth/me', { credentials: 'include' });
+                if (!res.ok) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                const { data } = await res.json();
+                state.currentUser = data.user;
+
+                if (state.currentUser.role !== 'admin') {
+                    // کاربر عادی → برو به داشبورد
+                    window.location.href = '/dashboard';
+                    return;
+                }
+
+                // همه چیز اوکی → لود کن
+                await loadStats();
+                await loadUsers();
+            } catch {
+                window.location.href = '/';
+            }
+        }
+
+        // ============ لود آمار ============
+        async function loadStats() {
+            try {
+                const { data } = await apiGet('/stats');
+                const s = data.stats;
+                $('statTotalUsers').textContent = s.totalUsers;
+                $('statVerifiedEmails').textContent = s.verifiedEmails;
+                $('statVerifiedPhones').textContent = s.verifiedPhones;
+                $('statAdmins').textContent = s.totalAdmins;
+                $('statRecent').textContent = s.recentUsers;
+            } catch (err) {
+                showMsg('خطا در لود آمار: ' + err.message);
+            }
+        }
+
+        // ============ لود کاربران ============
+        async function loadUsers() {
+            const tbody = $('usersTableBody');
+            tbody.innerHTML = `
+    <tr>
+      <td colspan="8" class="empty-state">
+        <span class="emoji">⏳</span>
+        در حال بارگذاری...
+      </td>
+    </tr>
+  `;
+
+            try {
+                const params = new URLSearchParams({
+                    page: state.page,
+                    limit: state.limit,
+                });
+                if (state.search) params.append('search', state.search);
+                if (state.role) params.append('role', state.role);
+
+                const { data } = await apiGet('/users?' + params.toString());
+                renderUsers(data.users);
+                renderPagination(data.pagination);
+            } catch (err) {
+                tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="empty-state">
+          <span class="emoji">❌</span>
+          ${err.message}
+        </td>
+      </tr>
+    `;
+            }
+        }
+
+        // ============ نمایش کاربران ============
+        function renderUsers(users) {
+            const tbody = $('usersTableBody');
+
+            if (!users.length) {
+                tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="empty-state">
+          <span class="emoji">🔍</span>
+          کاربری پیدا نشد
+        </td>
+      </tr>
+    `;
+                return;
+            }
+
+            tbody.innerHTML = users
+                .map((u, i) => {
+                    const index = (state.page - 1) * state.limit + i + 1;
+                    const isSelf = u._id === state.currentUser._id;
+                    const joinDate = new Date(u.createdAt).toLocaleDateString('fa-IR');
+
+                    const roleBadge = u.role === 'admin'
+                        ? '<span class="role-badge admin">👑 ادمین</span>'
+                        : '<span class="role-badge user">👤 کاربر</span>';
+
+                    const roleToggleBtn = u.role === 'admin'
+                        ? `<button class="icon-btn" onclick="changeRole('${u._id}', 'user')" title="تبدیل به کاربر عادی" ${isSelf ? 'disabled' : ''}>👤</button>`
+                        : `<button class="icon-btn" onclick="changeRole('${u._id}', 'admin')" title="ارتقا به ادمین" ${isSelf ? 'disabled' : ''}>👑</button>`;
+
+                    const deleteBtn = `<button class="icon-btn danger" onclick="askDelete('${u._id}', '${u.email}')" title="حذف" ${isSelf ? 'disabled' : ''}>🗑</button>`;
+
+                    return `
+        <tr>
+          <td style="color:#64748b;">${index}</td>
+          <td style="direction: ltr; text-align: left; font-weight: 500;">${u.email}${isSelf ? ' <span style="color:#fbbf24; font-size:11px;">(خودت)</span>' : ''}</td>
+          <td>${roleBadge}</td>
+          <td><span class="status-dot ${u.isEmailVerified ? 'ok' : 'no'}"></span>${u.isEmailVerified ? 'تأیید' : 'در انتظار'}</td>
+          <td style="direction: ltr; text-align: left; color: #94a3b8;">${u.phone || '—'}</td>
+          <td><span class="status-dot ${u.isPhoneVerified ? 'ok' : 'no'}"></span>${u.isPhoneVerified ? 'تأیید' : 'در انتظار'}</td>
+          <td style="color: #94a3b8; font-size: 12px;">${joinDate}</td>
+          <td>
+            <div class="action-btns">
+              ${roleToggleBtn}
+              ${deleteBtn}
+            </div>
+          </td>
+        </tr>
+      `;
+                })
+                .join('');
+        }
+
+        // ============ صفحه‌بندی ============
+        function renderPagination(p) {
+            const pag = $('pagination');
+
+            if (p.totalPages <= 1) {
+                pag.classList.add('hidden');
+                return;
+            }
+
+            pag.classList.remove('hidden');
+            $('pageInfo').textContent = `صفحه ${p.page} از ${p.totalPages}`;
+            $('prevBtn').disabled = !p.hasPrev;
+            $('nextBtn').disabled = !p.hasNext;
+
+            state.page = p.page;
+        }
+
+        $('prevBtn').onclick = () => {
+            if (state.page > 1) {
+                state.page--;
+                loadUsers();
+            }
+        };
+
+        $('nextBtn').onclick = () => {
+            state.page++;
+            loadUsers();
+        };
+
+        // ============ سرچ و فیلتر ============
+        $('searchBtn').onclick = () => {
+            state.search = $('searchInput').value.trim();
+            state.role = $('roleFilter').value;
+            state.page = 1;
+            loadUsers();
+        };
+
+        $('clearBtn').onclick = () => {
+            $('searchInput').value = '';
+            $('roleFilter').value = '';
+            state.search = '';
+            state.role = '';
+            state.page = 1;
+            loadUsers();
+        };
+
+        $('searchInput').onkeydown = (e) => {
+            if (e.key === 'Enter') $('searchBtn').click();
+        };
+
+        // ============ تغییر نقش ============
+        async function changeRole(userId, newRole) {
+            const label = newRole === 'admin' ? 'ارتقا به ادمین' : 'تبدیل به کاربر عادی';
+            if (!confirm(`آیا از ${label} مطمئن هستی؟`)) return;
+
+            try {
+                const { message } = await apiSend(`/users/${userId}/role`, 'PATCH', {
+                    role: newRole,
+                });
+                showMsg(message || 'نقش تغییر کرد ✓', 'success');
+                await loadStats();
+                await loadUsers();
+            } catch (err) {
+                showMsg(err.message);
+            }
+        }
+
+        // ============ حذف ============
+        function askDelete(userId, email) {
+            state.deleteTarget = userId;
+            $('confirmText').textContent = `آیا از حذف کاربر "${email}" مطمئن هستی؟ این عمل قابل بازگشت نیست.`;
+            $('confirmMsg').classList.remove('show');
+            $('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirm() {
+            state.deleteTarget = null;
+            $('confirmModal').classList.add('hidden');
+        }
+
+        $('confirmNo').onclick = closeConfirm;
+
+        $('confirmYes').onclick = async () => {
+            if (!state.deleteTarget) return;
+
+            try {
+                const { message } = await apiSend(`/users/${state.deleteTarget}`, 'DELETE');
+                closeConfirm();
+                showMsg(message || 'کاربر حذف شد ✓', 'success');
+                await loadStats();
+                await loadUsers();
+            } catch (err) {
+                $('confirmMsg').textContent = err.message;
+                $('confirmMsg').className = 'msg show error';
+            }
+        };
+
+        // ============ خروج ============
+        $('logoutBtn').onclick = async () => {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include',
+                });
+            } catch { }
+            window.location.href = '/';
+        };
+
+        // ============ شروع ============
+        init();
+    </script>
+</body>
+
+</html>
